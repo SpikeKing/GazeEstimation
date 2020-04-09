@@ -237,6 +237,7 @@ if __name__ == '__main__':
                     if u1 > bgr_w:
                         u1 = bgr_w
                         eye_image_raw = eye_image_raw[:, 0:u1 - u0]
+                        eye_image_annotated = eye_image_annotated[:, 0:u1 - u0]
 
                     print('[Info] bgr: {}'.format(bgr.shape))
                     print('[Info] bgr[v0:v1, u0:u1]: {}, u0: {}, u1: {}'.format(bgr[v0:v1, u0:u1].shape, u0, u1))
