@@ -228,11 +228,13 @@ if __name__ == '__main__':
                     v0 = face_index * 2 * eh
                     v1 = v0 + eh
                     v2 = v1 + eh
+
+                    print('[Info] eye_side: {}'.format(eye_side))
                     u0 = 0 if eye_side == 'left' else ew
                     u1 = u0 + ew
 
                     print('[Info] bgr: {}'.format(bgr.shape))
-                    print('[Info] bgr[v0:v1, u0:u1]: {}'.format(bgr[v0:v1, u0:u1].shape))
+                    print('[Info] bgr[v0:v1, u0:u1]: {}, u0: {}, u1: {}'.format(bgr[v0:v1, u0:u1].shape, u0, u1))
                     print('[Info] eye_image_raw: {}'.format(eye_image_raw.shape))
 
                     bgr[v0:v1, u0:u1] = eye_image_raw
