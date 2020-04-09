@@ -236,12 +236,13 @@ if __name__ == '__main__':
                     bgr_h, bgr_w, _ = bgr.shape
                     if u1 > bgr_w:
                         u1 = bgr_w
+                        eye_image_raw = eye_image_raw[:, 0:u1 - u0]
 
                     print('[Info] bgr: {}'.format(bgr.shape))
                     print('[Info] bgr[v0:v1, u0:u1]: {}, u0: {}, u1: {}'.format(bgr[v0:v1, u0:u1].shape, u0, u1))
                     print('[Info] eye_image_raw: {}'.format(eye_image_raw.shape))
 
-                    bgr[v0:v1, u0:u1] = eye_image_raw[:, 0:u1 - u0]
+                    bgr[v0:v1, u0:u1] = eye_image_raw
                     bgr[v1:v2, u0:u1] = eye_image_annotated
 
                     # Visualize preprocessing results
