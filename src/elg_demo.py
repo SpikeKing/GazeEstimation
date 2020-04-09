@@ -276,6 +276,7 @@ if __name__ == '__main__':
                     eyeball_centre = eye_landmarks[17, :]
                     eyeball_radius = np.linalg.norm(eye_landmarks[18, :] -
                                                     eye_landmarks[17, :])
+                    print('[Info] eyeball_radius: {}'.format(eyeball_radius))
 
                     # Smooth and visualize gaze direction
                     num_total_eyes_in_frame = len(frame['eyes'])
@@ -330,6 +331,8 @@ if __name__ == '__main__':
                             color=(0, 255, 255), markerType=cv.MARKER_CROSS, markerSize=4,
                             thickness=1, line_type=cv.LINE_AA,
                         )
+
+                    print('[Info] 绘制完成!')
 
                     dtime = 1e3 * (time.time() - start_time)
                     if 'visualization' not in frame['time']:
