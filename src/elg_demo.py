@@ -230,6 +230,11 @@ if __name__ == '__main__':
                     v2 = v1 + eh
                     u0 = 0 if eye_side == 'left' else ew
                     u1 = u0 + ew
+
+                    print('[Info] bgr: {}'.format(bgr.shape))
+                    print('[Info] bgr[v0:v1, u0:u1]: {}'.format(bgr[v0:v1, u0:u1].shape))
+                    print('[Info] eye_image_raw: {}'.format(eye_image_raw.shape))
+
                     bgr[v0:v1, u0:u1] = eye_image_raw
                     bgr[v1:v2, u0:u1] = eye_image_annotated
 
