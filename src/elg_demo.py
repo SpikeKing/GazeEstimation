@@ -14,6 +14,9 @@ import tensorflow as tf
 from datasources import Video, Webcam
 from models import ELG
 import util.gaze
+from utils.project_utils import mkdir_if_not_exist
+
+from root_dir import DATA_DIR
 
 if __name__ == '__main__':
 
@@ -333,60 +336,65 @@ if __name__ == '__main__':
                         )
 
                     print('[Info] 绘制完成!')
+                    frames_dir = os.path.join(DATA_DIR, "frames")
+                    mkdir_if_not_exist(frames_dir)
+                    frame_path = os.path.join(frames_dir, '{}.out.jpg'.format(frame_index))
+                    print('[Info] 写入视频帧: {}'.format(frame_path))
+                    cv.imwrite(frame_path, bgr)
 
-                    dtime = 1e3 * (time.time() - start_time)
-                    if 'visualization' not in frame['time']:
-                        frame['time']['visualization'] = dtime
-                    else:
-                        frame['time']['visualization'] += dtime
-
-                    def _dtime(before_id, after_id):
-                        return int(1e3 * (frame['time'][after_id] - frame['time'][before_id]))
-
-                    def _dstr(title, before_id, after_id):
-                        return '%s: %dms' % (title, _dtime(before_id, after_id))
-
-                    if eye_index == len(frame['eyes']) - 1:
-                        # Calculate timings
-                        frame['time']['after_visualization'] = time.time()
-                        fps = int(np.round(1.0 / (time.time() - last_frame_time)))
-                        fps_history.append(fps)
-                        if len(fps_history) > 60:
-                            fps_history = fps_history[-60:]
-                        fps_str = '%d FPS' % np.mean(fps_history)
-                        last_frame_time = time.time()
-                        fh, fw, _ = bgr.shape
-                        cv.putText(bgr, fps_str, org=(fw - 110, fh - 20),
-                                   fontFace=cv.FONT_HERSHEY_DUPLEX, fontScale=0.8,
-                                   color=(0, 0, 0), thickness=1, lineType=cv.LINE_AA)
-                        cv.putText(bgr, fps_str, org=(fw - 111, fh - 21),
-                                   fontFace=cv.FONT_HERSHEY_DUPLEX, fontScale=0.79,
-                                   color=(255, 255, 255), thickness=1, lineType=cv.LINE_AA)
-                        if not args.headless:
-                            cv.imshow('vis', bgr)
-                        last_frame_index = frame_index
-
-                        # Record frame?
-                        if args.record_video:
-                            video_out_queue.put_nowait(frame_index)
-
-                        # Quit?
-                        if cv.waitKey(1) & 0xFF == ord('q'):
-                            return
-
-                        # Print timings
-                        if frame_index % 60 == 0:
-                            latency = _dtime('before_frame_read', 'after_visualization')
-                            processing = _dtime('after_frame_read', 'after_visualization')
-                            timing_string = ', '.join([
-                                _dstr('read', 'before_frame_read', 'after_frame_read'),
-                                _dstr('preproc', 'after_frame_read', 'after_preprocessing'),
-                                'infer: %dms' % int(frame['time']['inference']),
-                                'vis: %dms' % int(frame['time']['visualization']),
-                                'proc: %dms' % processing,
-                                'latency: %dms' % latency,
-                            ])
-                            print('%08d [%s] %s' % (frame_index, fps_str, timing_string))
+                    # dtime = 1e3 * (time.time() - start_time)
+                    # if 'visualization' not in frame['time']:
+                    #     frame['time']['visualization'] = dtime
+                    # else:
+                    #     frame['time']['visualization'] += dtime
+                    #
+                    # def _dtime(before_id, after_id):
+                    #     return int(1e3 * (frame['time'][after_id] - frame['time'][before_id]))
+                    #
+                    # def _dstr(title, before_id, after_id):
+                    #     return '%s: %dms' % (title, _dtime(before_id, after_id))
+                    #
+                    # if eye_index == len(frame['eyes']) - 1:
+                    #     # Calculate timings
+                    #     frame['time']['after_visualization'] = time.time()
+                    #     fps = int(np.round(1.0 / (time.time() - last_frame_time)))
+                    #     fps_history.append(fps)
+                    #     if len(fps_history) > 60:
+                    #         fps_history = fps_history[-60:]
+                    #     fps_str = '%d FPS' % np.mean(fps_history)
+                    #     last_frame_time = time.time()
+                    #     fh, fw, _ = bgr.shape
+                    #     cv.putText(bgr, fps_str, org=(fw - 110, fh - 20),
+                    #                fontFace=cv.FONT_HERSHEY_DUPLEX, fontScale=0.8,
+                    #                color=(0, 0, 0), thickness=1, lineType=cv.LINE_AA)
+                    #     cv.putText(bgr, fps_str, org=(fw - 111, fh - 21),
+                    #                fontFace=cv.FONT_HERSHEY_DUPLEX, fontScale=0.79,
+                    #                color=(255, 255, 255), thickness=1, lineType=cv.LINE_AA)
+                    #     if not args.headless:
+                    #         cv.imshow('vis', bgr)
+                    #     last_frame_index = frame_index
+                    #
+                    #     # Record frame?
+                    #     if args.record_video:
+                    #         video_out_queue.put_nowait(frame_index)
+                    #
+                    #     # Quit?
+                    #     if cv.waitKey(1) & 0xFF == ord('q'):
+                    #         return
+                    #
+                    #     # Print timings
+                    #     if frame_index % 60 == 0:
+                    #         latency = _dtime('before_frame_read', 'after_visualization')
+                    #         processing = _dtime('after_frame_read', 'after_visualization')
+                    #         timing_string = ', '.join([
+                    #             _dstr('read', 'before_frame_read', 'after_frame_read'),
+                    #             _dstr('preproc', 'after_frame_read', 'after_preprocessing'),
+                    #             'infer: %dms' % int(frame['time']['inference']),
+                    #             'vis: %dms' % int(frame['time']['visualization']),
+                    #             'proc: %dms' % processing,
+                    #             'latency: %dms' % latency,
+                    #         ])
+                    #         print('%08d [%s] %s' % (frame_index, fps_str, timing_string))
 
 
         visualize_thread = threading.Thread(target=_visualize_output, name='visualization')
